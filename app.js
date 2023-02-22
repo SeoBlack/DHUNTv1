@@ -17,7 +17,7 @@ const ATLASUSER = process.env.ATLASUSER
 const app = express();
 app.use(express.json())
 app.use(bodyParser.urlencoded({extended:true}));
-
+app.use(express.static(path.resolve(__dirname, '/build')));
 mongoose.set('strictQuery', false);
 mongoose.connect('mongodb+srv://' + ATLASUSER +':'+ATLASPASS+'@cluster0.zxkgieq.mongodb.net/?retryWrites=true&w=majority');
 
