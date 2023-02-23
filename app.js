@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import covers from "./covers.json" assert { type: "json" };
+import covers from "./covers.json";
 import path from "path"
 import fetch from "node-fetch"
 import { fileURLToPath } from 'url';
