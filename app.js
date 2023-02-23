@@ -75,6 +75,7 @@ const gameSchema = mongoose.Schema({
     lastChange: String,
     deals:[dealsSchema],
     gameDescription:String,
+    fetchDate:Number,
     screenShots:[String],
 
 })
@@ -149,6 +150,7 @@ async function fetchDeals(){
                 steamRatingText: game.steamRatingText,
                 steamRatingPercent: game.steamRatingPercent,
                 steamRatingCount: game.steamRatingCount,
+                fetchDate: Date.now() / 1000,
                 releaseDate: game.releaseDate,
                 lastChange: game.lastChange,
                
@@ -179,26 +181,7 @@ function fetchCovers(){
 }
 
 //filling the database 
-function fetchData(){
-    Game.find({})
-    .then(result => {
-        if(result.length ===0 ){
-            fetchDeals()
-        }
-    })
-    Store.find({})
-    .then( result => {
-        if(result.length === 0){
-            fetchStores()
-        }
-    })
-    Cover.find({})
-    .then(result => {
-        if(result.length === 0 ){
-            fetchCovers()
-        }
-    })
-}
+
 function cleardb(){
 
     Game.remove({} , (err) => {
@@ -228,13 +211,30 @@ function cleardb(){
         console.log("Cleared [Cover]")
     } )
 } 
+function fetchData(){
+    Game.find({})
+    .then(result => {
+        if(result.length ===0 ){
+            fetchDeals()
+        }
+
+    })
+    Store.find({})
+    .then( result => {
+        if(result.length === 0){
+            fetchStores()
+        }
+    })
+    Cover.find({})
+    .then(result => {
+        if(result.length === 0 ){
+            fetchCovers()
+        }
+    })
+}
 //getting the data
 fetchData();
 
-schedule.scheduleJob('0 0 * * *', () => { 
-    cleardb()
-    fetchData()
-})
 
 function sort(result,filter){
     if(filter === "Expensive"){
@@ -279,6 +279,7 @@ function sort(result,filter){
 }
 
 app.get("/api/",(req,res)=>{
+
     console.log("Got A Get Request");
     const filter = req.query.sort;
 
@@ -287,6 +288,11 @@ app.get("/api/",(req,res)=>{
        
         if (result.length != 0)
         {   
+            if(Date.now() - result[0].fetchDate >= 86400){
+                cleardb()
+                fetchData()
+                res.redirect('/api/');
+            }
             res.json(sort(result,filter))
 
         }
