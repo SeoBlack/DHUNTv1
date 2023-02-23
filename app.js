@@ -294,7 +294,10 @@ app.get("/api/",(req,res)=>{
                 fetchData()
                 res.redirect('/api/');
             }
-            res.json(sort(result,filter))
+            else{
+                res.json(sort(result,filter))
+            }
+            
 
         }
         else{
