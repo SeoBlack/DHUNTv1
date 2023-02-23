@@ -5,6 +5,7 @@ const mongoose               = require("mongoose");
 const covers                 = require("./covers.json").covers;
 const cors                   = require('cors');
 const schedule               = require('node-schedule')
+const path                   = require('path');
 
 
 
@@ -14,12 +15,14 @@ const cheapshark = "https://www.cheapshark.com/api/1.0/deals";
 // const TWITCH_SECRET=process.env.TWITCH_SECRET
 const ATLASPASS = process.env.ATLASPASS
 const ATLASUSER = process.env.ATLASUSER
+console.log(ATLASPASS,ATLASUSER)
 const app = express();
 app.use(express.json())
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static(path.resolve(__dirname, '/build')));
+app.use(express.static(path.join(__dirname, 'build')));
+
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://' + ATLASUSER +':'+ATLASPASS+'@cluster0.zxkgieq.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://'+ATLASUSER+':'+ATLASPASS+'@cluster0.zxkgieq.mongodb.net/?retryWrites=true&w=majority');
 
 
 const storeSchema = mongoose.Schema({
@@ -274,7 +277,8 @@ function sort(result,filter){
     }
     return result
 }
-app.get("/",(req,res)=>{
+
+app.get("/api/",(req,res)=>{
     console.log("Got A Get Request");
     const filter = req.query.sort;
 
@@ -295,7 +299,7 @@ app.get("/",(req,res)=>{
     .catch(error => console.log('error', error));
 
 })
-app.get("/info/:gameID",(req,res) =>{
+app.get("/api/info/:gameID",(req,res) =>{
     const gameID = req.params.gameID;
     Game.findOne({gameID:gameID})
     .then(async (result) => {
@@ -401,7 +405,7 @@ app.get("/info/:gameID",(req,res) =>{
     //     console.log('error', error)});
 
 })
-app.get("/covers",(req,res) =>{
+app.get("/api/covers",(req,res) =>{
     
     Cover.find({})
     .then(result =>{
@@ -416,15 +420,16 @@ app.get("/covers",(req,res) =>{
     .then((array) =>res.json(array))
 })
 ///////POST REQUESTS
-app.post("/register",(req,res) =>{
+// app.post("/register",(req,res) =>{
 
-});
-app.post("/login",(req,res) =>{
+// });
+// app.post("/login",(req,res) =>{
 
-});
+// });
 
-
-
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
 app.listen(4000,()=>{
     console.log("[+]Server Started On port 4000");
 })
