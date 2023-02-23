@@ -137,7 +137,10 @@ async function fetchDeals(){
         })
         games.forEach(async game => {
             const storeName = await Store.findOne({storeID:game.storeID})
+            
             .then(result => result.storeName)
+            .catch(err => console.log(err))
+            console.log(storeName)
             const newGame = new Game({
                 title:game.title,
                 gameID:game.gameID,
@@ -212,29 +215,32 @@ function cleardb(){
         console.log("Cleared [Cover]")
     } )
 } 
-function fetchData(){
-    Game.find({})
-    .then(result => {
-        if(result.length ===0 ){
-            fetchDeals()
-        }
-
-    })
-    Store.find({})
+async function fetchData(){
+    await Store.find({})
     .then( result => {
         if(result.length === 0){
             fetchStores()
         }
     })
-    Cover.find({})
+    await Game.find({})
+    .then(result => {
+        if(result.length ===0 ){
+            fetchDeals()
+        }
+        else if(Date.now() / 1000 - result[0].fetchDate >= 84600){
+            cleardb()
+            fetchDeals()
+        }
+    })
+    await Cover.find({})
     .then(result => {
         if(result.length === 0 ){
             fetchCovers()
         }
     })
+    return true 
 }
 //getting the data
-fetchData();
 
 
 function sort(result,filter){
@@ -279,30 +285,20 @@ function sort(result,filter){
     return result
 }
 
-app.get("/api/",(req,res)=>{
-
+app.get("/api/", async(req,res)=>{
     console.log("Got A Get Request");
     const filter = req.query.sort;
-
+    await fetchData()
     Game.find({})
     .then((result)=> { 
        
         if (result.length != 0)
         {   
-            if(Date.now() - result[0].fetchDate >= 86400){
-                cleardb()
-                fetchData()
-                res.redirect('/api/');
-            }
-            else{
-                res.json(sort(result,filter))
-            }
-            
 
+            res.json(sort(result,filter))
         }
         else{
-
-            console.log("No Result Found");
+            res.send("No Result Found");
         }
     })
 
