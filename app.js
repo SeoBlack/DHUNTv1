@@ -1,14 +1,14 @@
-require("dotenv").config()
-const express                = require("express");
-const bodyParser             = require("body-parser");
-const mongoose               = require("mongoose");
-const covers                 = require("./covers.json").covers;
-const cors                   = require('cors');
-const schedule               = require('node-schedule')
-const path                   = require('path');
-const fetch                  = require( "node-fetch");
+import express from "express";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import covers from "./covers.json" assert { type: "json" };
+import path from "path"
+import fetch from "node-fetch"
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const cheapshark = "https://www.cheapshark.com/api/1.0/deals";
 // const twitchEndPoint = "https://api.igdb.com/v4/"
