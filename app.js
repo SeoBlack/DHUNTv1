@@ -126,6 +126,7 @@ async function fetchStores(){
         })
     })
     .finally(() => console.log("Fetched Stores"))
+    .catch(err => console.log(err))
 }
 async function fetchDeals(){
     fetch(cheapshark,requestOptions)
@@ -322,6 +323,7 @@ app.get("/api/info/:gameID",(req,res) =>{
                 if(result.deals.length === 0){
                     const game = await fetch("https://www.cheapshark.com/api/1.0/games?id=" + gameID,requestOptions)
                     .then(response => response.json())
+                    .catch(err => console.log(err))
                         console.log("FETCHED DEALS")
                         game.deals.map( async deal =>{
                             ///BUG not adding the store info to the deals array---> Fixed
@@ -339,6 +341,7 @@ app.get("/api/info/:gameID",(req,res) =>{
                                 
                                 return  newDeal
                             })
+                            .catch(err => console.log(err))
                             
                             Game.findOneAndUpdate({gameID:gameID},{$push:{deals:temp}},(err) =>{
                                 if(err){
@@ -352,6 +355,7 @@ app.get("/api/info/:gameID",(req,res) =>{
                 if(result.fetchedSteam === false && result.steamAppID !== null){
                         const steamData = await fetch("https://store.steampowered.com/api/appdetails?appids=" + result.steamAppID)
                         .then(response => response.json())
+                        .catch(err => console.log(err))
                             if(steamData && steamData[result.steamAppID].success === true){
                                 const data = steamData[result.steamAppID].data
                                 
@@ -398,6 +402,7 @@ app.get("/api/info/:gameID",(req,res) =>{
                 
                 const results = await Game.find({gameID:gameID})
                 .then(result => result)
+                .catch(err => console.log(err))
                 return results
             }
 
@@ -406,6 +411,7 @@ app.get("/api/info/:gameID",(req,res) =>{
         }
     })
     .then(data => res.json(data))
+    .catch(err => console.log(err))
     // .catch(error => {
     //     res.send(error)
     //     console.log('error', error)});
@@ -424,6 +430,7 @@ app.get("/api/covers",(req,res) =>{
         return imagesArray
     })
     .then((array) =>res.json(array))
+    .catch(err => console.log(err))
 })
 ///////POST REQUESTS
 // app.post("/register",(req,res) =>{
