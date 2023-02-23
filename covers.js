@@ -1,5 +1,4 @@
-{
-    "covers":{
+export const covers  = {
         "Horizon":[
             "https://wallpaperaccess.com/full/4063068.jpg",
             "https://asset.vg247.com/horizon-forbidden-west-review-vg247.jpg/BROK/resize/1920x1920%3E/format/jpg/quality/80/horizon-forbidden-west-review-vg247.jpg",
@@ -16,5 +15,3 @@
             "https://cdn.vox-cdn.com/thumbor/n_HTukfTE3gNmBmLzpLE8QSaxqk=/0x0:1200x800/1200x800/filters:focal(504x304:696x496)/cdn.vox-cdn.com/uploads/chorus_image/image/66956314/LastOfUs2_SonyInteractiveEntertainment_Ringer.0.jpg"
         ]
     }
-
-}
