@@ -6,6 +6,7 @@ const covers                 = require("./covers.json").covers;
 const cors                   = require('cors');
 const schedule               = require('node-schedule')
 const path                   = require('path');
+const fetch                  = require( "node-fetch");
 
 
 
