@@ -143,7 +143,7 @@ body {
   padding-right:0 ;
 }
 .small-card .custom-btn{
-  width: 100%; 
+  width: 100%;
   height: 10%;
 }
 .smallcard-footer{
@@ -167,7 +167,7 @@ body {
 
 }
 .card-container{
-  height:35vh;
+  height:45vh;
   
 
 }
@@ -340,7 +340,7 @@ body {
 .form-control::placeholder{
   color: var(--gray);
 }
-.login-title{ 
+.login-title{
   margin-bottom: 10%;
 }
 .invalid{

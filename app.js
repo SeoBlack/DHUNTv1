@@ -1,3 +1,4 @@
+import dotenv from "dotenv"
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
@@ -5,6 +6,8 @@ import path from "path"
 import fetch from "node-fetch"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import cors from 'cors'
+dotenv.config()
 const covers  = {
     Horizon:[
         "https://wallpaperaccess.com/full/4063068.jpg",
@@ -30,17 +33,21 @@ const cheapshark = "https://www.cheapshark.com/api/1.0/deals";
 // const twitchEndPoint = "https://api.igdb.com/v4/"
 // const TWITCH_CLIENT_ID=process.env.TWITCH_CLIENT_ID
 // const TWITCH_SECRET=process.env.TWITCH_SECRET
-const ATLASPASS = process.env.ATLASPASS
-const ATLASUSER = process.env.ATLASUSER
-console.log(ATLASPASS,ATLASUSER)
+const ATLAS_URI = process.env.ATLAS_URI
+console.log(ATLAS_URI)
 const app = express();
+app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname, 'build')));
 
-mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://'+ATLASUSER+':'+ATLASPASS+'@cluster0.zxkgieq.mongodb.net/?retryWrites=true&w=majority');
+mongoose.set('strictQuery', true);
+mongoose.connect(ATLAS_URI).then(() =>{
+	app.listen(3000,()=>{
+		console.log("Server Started On Port 3000");
+	})
 
+});
 
 const storeSchema = mongoose.Schema({
     storeID:Number,
@@ -188,19 +195,19 @@ async function fetchDeals(){
 }
 function fetchCovers(){
 
-            
-    for(game in covers){
-        const random = Math.floor(Math.random() * covers[game].length);
-        const newCover = new Cover({
-            imageURL:covers[game][random]
-        }) 
-        newCover.save();
-    }
-    console.log("Fetched Covers");
-
-
+	    for(const game in covers){
+        	const random = Math.floor(Math.random() * covers[game].length);
+        	const newCover = new Cover({
+            	imageURL:covers[game][random]
+        	}) 
+		newCover.save()
+		.catch(err =>{
+			console.log(err)	
+		})
+    	     }
+    		console.log("Fetched Covers");
 }
-
+fetchCovers()
 //filling the database 
 
 function cleardb(){
@@ -459,6 +466,3 @@ app.get("/api/covers",(req,res) =>{
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
   });
-app.listen(4000,()=>{
-    console.log("[+]Server Started On port 4000");
-})
